@@ -1,0 +1,251 @@
+[
+  {
+    "id": "shimofuri-myojo",
+    "name": "霜降り明星",
+    "members": ["せいや", "粗品"],
+    "programs": [
+      {
+        "title": "霜降り明星のオールナイトニッポン0",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "週1回"
+      },
+      {
+        "title": "霜降り明星チャンネル",
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@shimofuri_myojo",
+        "frequency": "不定期"
+      },
+      {
+        "title": "霜降り明星のGERA",
+        "platform": "gera",
+        "url": "https://www.gera.fm/",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "kuuki-kaidan",
+    "name": "空気階段",
+    "members": ["もぐら", "かたまり"],
+    "programs": [
+      {
+        "title": "空気階段の踊り場",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/TBS/",
+        "frequency": "週1回"
+      },
+      {
+        "title": "空気階段の踊り場 Podcast",
+        "platform": "apple_podcast",
+        "url": "https://podcasts.apple.com/jp/podcast/%E7%A9%BA%E6%B0%97%E9%9A%8E%E6%AE%B5%E3%81%AE%E8%B8%8A%E3%82%8A%E5%A0%B4/id1539709392",
+        "frequency": "週1回"
+      }
+    ]
+  },
+  {
+    "id": "audrey",
+    "name": "オードリー",
+    "members": ["若林正恭", "春日俊彰"],
+    "programs": [
+      {
+        "title": "オードリーのオールナイトニッポン",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "週1回"
+      }
+    ]
+  },
+  {
+    "id": "lalande",
+    "name": "ラランド",
+    "members": ["ニシダ", "サーヤ"],
+    "programs": [
+      {
+        "title": "ラランドのぬかるみの世界",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/MBS/",
+        "frequency": "週1回"
+      },
+      {
+        "title": "ラランド GERA",
+        "platform": "gera",
+        "url": "https://www.gera.fm/",
+        "frequency": "不定期"
+      },
+      {
+        "title": "ラランド Podcast",
+        "platform": "spotify",
+        "url": "https://open.spotify.com/show/",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "mayurika",
+    "name": "マユリカ",
+    "members": ["中谷", "阪本"],
+    "programs": [
+      {
+        "title": "マユリカのうなげろりん",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/MBS/",
+        "frequency": "週1回"
+      },
+      {
+        "title": "マユリカチャンネル",
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@mayurika",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "alco-peace",
+    "name": "アルコ＆ピース",
+    "members": ["平子祐希", "酒井健太"],
+    "programs": [
+      {
+        "title": "アルコ＆ピースのオールナイトニッポン0",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "月1回"
+      }
+    ]
+  },
+  {
+    "id": "haraiichi",
+    "name": "ハライチ",
+    "members": ["岩井勇気", "澤部佑"],
+    "programs": [
+      {
+        "title": "ハライチのターン！",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/TBS/",
+        "frequency": "週1回"
+      },
+      {
+        "title": "ハライチチャンネル",
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@haraiichi",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "nishikigoi",
+    "name": "錦鯉",
+    "members": ["長谷川雅紀", "渡辺隆"],
+    "programs": [
+      {
+        "title": "錦鯉のGERA",
+        "platform": "gera",
+        "url": "https://www.gera.fm/",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "yarens",
+    "name": "ヤーレンズ",
+    "members": ["楢原真樹", "出井隼之介"],
+    "programs": [
+      {
+        "title": "ヤーレンズのGERA",
+        "platform": "gera",
+        "url": "https://www.gera.fm/",
+        "frequency": "不定期"
+      },
+      {
+        "title": "ヤーレンズチャンネル",
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@yarens",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "sandwichman",
+    "name": "サンドウィッチマン",
+    "members": ["伊達みきお", "富澤たけし"],
+    "programs": [
+      {
+        "title": "サンドウィッチマンのオールナイトニッポンPremium",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "月1回"
+      }
+    ]
+  },
+  {
+    "id": "chidori",
+    "name": "千鳥",
+    "members": ["大悟", "ノブ"],
+    "programs": [
+      {
+        "title": "千鳥のオールナイトニッポン",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "不定期"
+      }
+    ]
+  },
+  {
+    "id": "ninety-nine",
+    "name": "ナインティナイン",
+    "members": ["岡村隆史", "矢部浩之"],
+    "programs": [
+      {
+        "title": "ナインティナインのオールナイトニッポン",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "週1回"
+      }
+    ]
+  },
+  {
+    "id": "bakusho-mondai",
+    "name": "爆笑問題",
+    "members": ["太田光", "田中裕二"],
+    "programs": [
+      {
+        "title": "爆笑問題の日曜サンデー",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/TBS/",
+        "frequency": "週1回"
+      }
+    ]
+  },
+  {
+    "id": "bananaman",
+    "name": "バナナマン",
+    "members": ["設楽統", "日村勇紀"],
+    "programs": [
+      {
+        "title": "バナナマンのバナナムーンGOLD",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "週1回"
+      }
+    ]
+  },
+  {
+    "id": "kamaitachi",
+    "name": "かまいたち",
+    "members": ["濱家隆一", "山内健司"],
+    "programs": [
+      {
+        "title": "かまいたちのオールナイトニッポン0",
+        "platform": "radiko",
+        "url": "https://radiko.jp/#!/ts/LFR/",
+        "frequency": "月1回"
+      },
+      {
+        "title": "かまいたちチャンネル",
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@kamaitachi",
+        "frequency": "不定期"
+      }
+    ]
+  }
+]
