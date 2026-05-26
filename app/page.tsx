@@ -2,24 +2,41 @@
 
 import { useState, useMemo } from 'react'
 import artistsData from '@/data/artists.json'
-import type { Artist } from '@/types'
+import type { Artist, Platform } from '@/types'
 import ArtistCard from '@/components/ArtistCard'
 import BottomNav from '@/components/BottomNav'
 
 const artists = artistsData as Artist[]
 
+const PLATFORM_FILTERS: { value: Platform; label: string; activeClass: string }[] = [
+  { value: 'radiko',        label: 'radiko',  activeClass: 'bg-blue-600 text-white border-blue-600' },
+  { value: 'youtube',       label: 'YouTube', activeClass: 'bg-red-600 text-white border-red-600' },
+  { value: 'gera',          label: 'GERA',    activeClass: 'bg-orange-500 text-white border-orange-500' },
+  { value: 'spotify',       label: 'Spotify', activeClass: 'bg-green-600 text-white border-green-600' },
+  { value: 'apple_podcast', label: 'Apple',   activeClass: 'bg-purple-600 text-white border-purple-600' },
+]
+
 export default function HomePage() {
   const [query, setQuery] = useState('')
+  const [activePlatform, setActivePlatform] = useState<Platform | null>(null)
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return artists
-    const q = query.toLowerCase()
-    return artists.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) ||
-        a.members.some((m) => m.toLowerCase().includes(q))
-    )
-  }, [query])
+    let result = artists
+    if (query.trim()) {
+      const q = query.toLowerCase()
+      result = result.filter(
+        (a) =>
+          a.name.toLowerCase().includes(q) ||
+          a.members.some((m) => m.toLowerCase().includes(q))
+      )
+    }
+    if (activePlatform) {
+      result = result.filter((a) =>
+        a.programs.some((p) => p.platform === activePlatform)
+      )
+    }
+    return result
+  }, [query, activePlatform])
 
   return (
     <div className="max-w-[480px] mx-auto min-h-screen bg-white">
@@ -62,13 +79,33 @@ export default function HomePage() {
             </button>
           )}
         </div>
+        <div className="flex gap-2 mt-3 overflow-x-auto pb-0.5 scrollbar-hide">
+          {PLATFORM_FILTERS.map(({ value, label, activeClass }) => {
+            const isActive = activePlatform === value
+            return (
+              <button
+                key={value}
+                onClick={() => setActivePlatform(isActive ? null : value)}
+                className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
+                  isActive
+                    ? activeClass
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                }`}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
       </header>
 
       <main className="pb-24">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
             <p className="text-gray-500 text-sm">
-              「{query}」に一致する芸人が見つかりません
+              {query
+                ? `「${query}」に一致する芸人が見つかりません`
+                : '該当する芸人が見つかりません'}
             </p>
           </div>
         ) : (
