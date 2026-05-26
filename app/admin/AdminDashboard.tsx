@@ -19,10 +19,17 @@ function generateId(name: string): string {
 
 type Tab = 'list' | 'add'
 
-export default function AdminDashboard({ initialArtists }: { initialArtists: Artist[] }) {
+export default function AdminDashboard({
+  kvArtists,
+  staticArtists,
+}: {
+  kvArtists: Artist[]
+  staticArtists: Artist[]
+}) {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('list')
-  const [artists, setArtists] = useState(initialArtists)
+  const [artists, setArtists] = useState(kvArtists)
+  const allArtists = [...artists, ...staticArtists]
 
   // 追加フォーム
   const [name, setName] = useState('')
@@ -132,7 +139,7 @@ export default function AdminDashboard({ initialArtists }: { initialArtists: Art
             tab === 'list' ? 'border-gray-900 text-gray-900' : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          登録済み（{artists.length}）
+          登録済み（{allArtists.length}）
         </button>
         <button
           onClick={() => setTab('add')}
@@ -147,36 +154,36 @@ export default function AdminDashboard({ initialArtists }: { initialArtists: Art
       <main className="pb-8">
         {/* 登録済みリスト */}
         {tab === 'list' && (
-          artists.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <p className="text-gray-400 text-sm">まだ追加した芸人がいません</p>
-              <button
-                onClick={() => setTab('add')}
-                className="mt-3 text-blue-600 text-sm font-medium"
-              >
-                追加する →
-              </button>
-            </div>
-          ) : (
-            <ul>
-              {artists.map((artist) => {
-                const platforms = Array.from(new Set(artist.programs.map((p) => p.platform as Platform)))
-                return (
-                  <li
-                    key={artist.id}
-                    className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100"
-                  >
-                    <InitialAvatar name={artist.name} />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900">{artist.name}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">
-                        {artist.programs.length}番組
-                        {artist.members.length > 0 && ` · ${artist.members.join('・')}`}
-                      </div>
-                      <div className="flex gap-1 mt-1.5 flex-wrap">
-                        {platforms.map((p) => <PlatformBadge key={p} platform={p} />)}
-                      </div>
+          <ul>
+            {allArtists.map((artist) => {
+              const isStatic = staticArtists.some((a) => a.id === artist.id)
+              const platforms = Array.from(new Set(artist.programs.map((p) => p.platform as Platform)))
+              return (
+                <li
+                  key={artist.id}
+                  className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100"
+                >
+                  <InitialAvatar name={artist.name} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-gray-900">{artist.name}</span>
+                      {isStatic && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded font-medium">
+                          初期データ
+                        </span>
+                      )}
                     </div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      {artist.programs.length}番組
+                      {artist.members.length > 0 && ` · ${artist.members.join('・')}`}
+                    </div>
+                    <div className="flex gap-1 mt-1.5 flex-wrap">
+                      {platforms.map((p) => <PlatformBadge key={p} platform={p} />)}
+                    </div>
+                  </div>
+                  {isStatic ? (
+                    <div className="w-8" />
+                  ) : (
                     <button
                       onClick={() => deleteArtist(artist.id)}
                       disabled={deletingId === artist.id}
@@ -188,11 +195,11 @@ export default function AdminDashboard({ initialArtists }: { initialArtists: Art
                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
-                  </li>
-                )
-              })}
-            </ul>
-          )
+                  )}
+                </li>
+              )
+            })}
+          </ul>
         )}
 
         {/* 追加フォーム */}

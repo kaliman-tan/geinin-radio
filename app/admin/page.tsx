@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redis } from '@/lib/redis'
+import artistsData from '@/data/artists.json'
 import type { Artist } from '@/types'
 import LoginForm from './LoginForm'
 import AdminDashboard from './AdminDashboard'
@@ -13,12 +14,17 @@ export default async function AdminPage() {
     return <LoginForm />
   }
 
-  let artists: Artist[] = []
+  let kvArtists: Artist[] = []
   try {
-    artists = await redis.get<Artist[]>('artists') ?? []
+    kvArtists = await redis.get<Artist[]>('artists') ?? []
   } catch {
     // Redis未設定時は空配列
   }
 
-  return <AdminDashboard initialArtists={artists} />
+  return (
+    <AdminDashboard
+      kvArtists={kvArtists}
+      staticArtists={artistsData as Artist[]}
+    />
+  )
 }
