@@ -46,7 +46,7 @@ export default function HomePage() {
       )
     }
     return result
-  }, [query, activePlatform])
+  }, [artists, query, activePlatform])
 
   return (
     <div className="max-w-[480px] mx-auto min-h-screen bg-white">
