@@ -41,6 +41,22 @@ export default function BottomNav() {
           </svg>
           お気に入り
         </Link>
+        <Link
+          href="/add"
+          className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 text-xs font-medium transition-colors ${
+            pathname === '/add' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          追加
+        </Link>
       </div>
     </nav>
   )

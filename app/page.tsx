@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import artistsData from '@/data/artists.json'
 import type { Artist, Platform } from '@/types'
 import ArtistCard from '@/components/ArtistCard'
 import BottomNav from '@/components/BottomNav'
 
-const artists = artistsData as Artist[]
+const staticArtists = artistsData as Artist[]
 
 const PLATFORM_FILTERS: { value: Platform; label: string; activeClass: string }[] = [
   { value: 'radiko',        label: 'radiko',  activeClass: 'bg-blue-600 text-white border-blue-600' },
@@ -19,6 +19,14 @@ const PLATFORM_FILTERS: { value: Platform; label: string; activeClass: string }[
 export default function HomePage() {
   const [query, setQuery] = useState('')
   const [activePlatform, setActivePlatform] = useState<Platform | null>(null)
+  const [customArtists, setCustomArtists] = useState<Artist[]>([])
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('geiradio-custom-artists') || '[]') as Artist[]
+    setCustomArtists(saved)
+  }, [])
+
+  const artists = useMemo(() => [...customArtists, ...staticArtists], [customArtists])
 
   const filtered = useMemo(() => {
     let result = artists
