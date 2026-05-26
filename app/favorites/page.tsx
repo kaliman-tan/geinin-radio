@@ -6,19 +6,25 @@ import type { Artist } from '@/types'
 import ArtistCard from '@/components/ArtistCard'
 import BottomNav from '@/components/BottomNav'
 
-const artists = artistsData as Artist[]
+const staticArtists = artistsData as Artist[]
 
 export default function FavoritesPage() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
+  const [customArtists, setCustomArtists] = useState<Artist[]>([])
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('geiradio-favorites') || '[]') as string[]
     setFavoriteIds(saved)
-    setMounted(true)
+    fetch('/api/artists')
+      .then((res) => res.json())
+      .then((data: Artist[]) => setCustomArtists(data))
+      .catch(() => {})
+      .finally(() => setMounted(true))
   }, [])
 
-  const favorites = artists.filter((a) => favoriteIds.includes(a.id))
+  const allArtists = [...customArtists, ...staticArtists]
+  const favorites = allArtists.filter((a) => favoriteIds.includes(a.id))
 
   return (
     <div className="max-w-[480px] mx-auto min-h-screen bg-white">

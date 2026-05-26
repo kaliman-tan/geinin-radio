@@ -22,8 +22,10 @@ export default function HomePage() {
   const [customArtists, setCustomArtists] = useState<Artist[]>([])
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('geiradio-custom-artists') || '[]') as Artist[]
-    setCustomArtists(saved)
+    fetch('/api/artists')
+      .then((res) => res.json())
+      .then((data: Artist[]) => setCustomArtists(data))
+      .catch(() => {})
   }, [])
 
   const artists = useMemo(() => [...customArtists, ...staticArtists], [customArtists])
