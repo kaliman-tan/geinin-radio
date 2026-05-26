@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv'
+import { redis } from '@/lib/redis'
 import { cookies } from 'next/headers'
 import type { Artist } from '@/types'
 
@@ -12,10 +12,10 @@ export async function DELETE(
   }
   const { id } = await params
   try {
-    const current = await kv.get<Artist[]>('artists') ?? []
-    await kv.set('artists', current.filter((a) => a.id !== id))
+    const current = await redis.get<Artist[]>('artists') ?? []
+    await redis.set('artists', current.filter((a) => a.id !== id))
   } catch {
-    return Response.json({ error: 'KV error' }, { status: 500 })
+    return Response.json({ error: 'Redis error' }, { status: 500 })
   }
   return Response.json({ ok: true })
 }

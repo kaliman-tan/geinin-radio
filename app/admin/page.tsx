@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { kv } from '@vercel/kv'
+import { redis } from '@/lib/redis'
 import type { Artist } from '@/types'
 import LoginForm from './LoginForm'
 import AdminDashboard from './AdminDashboard'
@@ -14,9 +14,9 @@ export default async function AdminPage() {
 
   let artists: Artist[] = []
   try {
-    artists = await kv.get<Artist[]>('artists') ?? []
+    artists = await redis.get<Artist[]>('artists') ?? []
   } catch {
-    // KV未設定時は空配列
+    // Redis未設定時は空配列
   }
 
   return <AdminDashboard initialArtists={artists} />

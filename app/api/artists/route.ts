@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv'
+import { redis } from '@/lib/redis'
 import { cookies } from 'next/headers'
 import type { Artist } from '@/types'
 
@@ -9,7 +9,7 @@ async function isAuthed(): Promise<boolean> {
 
 export async function GET() {
   try {
-    const artists = await kv.get<Artist[]>('artists') ?? []
+    const artists = await redis.get<Artist[]>('artists') ?? []
     return Response.json(artists)
   } catch {
     return Response.json([])
@@ -22,10 +22,10 @@ export async function POST(request: Request) {
   }
   const artist = await request.json() as Artist
   try {
-    const current = await kv.get<Artist[]>('artists') ?? []
-    await kv.set('artists', [artist, ...current])
+    const current = await redis.get<Artist[]>('artists') ?? []
+    await redis.set('artists', [artist, ...current])
   } catch {
-    return Response.json({ error: 'KV error' }, { status: 500 })
+    return Response.json({ error: 'Redis error' }, { status: 500 })
   }
   return Response.json({ ok: true })
 }
