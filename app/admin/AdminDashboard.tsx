@@ -21,11 +21,23 @@ interface ManualProgram {
   frequency: string
 }
 
+interface SearchResult {
+  title: string
+  creator: string
+  url: string
+}
+
 function generateId(name: string): string {
   return name.replace(/\s+/g, '-') + '-' + Date.now().toString(36)
 }
 
 const PLATFORMS: Platform[] = ['youtube', 'spotify', 'radiko', 'gera', 'apple_podcast', 'other']
+const SEARCHABLE_PLATFORMS: Platform[] = ['youtube', 'spotify']
+
+const SEARCH_API: Record<string, string> = {
+  youtube: '/api/youtube-search',
+  spotify: '/api/spotify-search',
+}
 
 type Tab = 'list' | 'add'
 
@@ -55,6 +67,13 @@ export default function AdminDashboard({
   const [manualTitle, setManualTitle] = useState('')
   const [manualUrl, setManualUrl] = useState('')
   const [manualFrequency, setManualFrequency] = useState('不定期')
+
+  // プラットフォーム検索（YouTube/Spotify）
+  const [platformQuery, setPlatformQuery] = useState('')
+  const [platformResults, setPlatformResults] = useState<SearchResult[]>([])
+  const [platformSearching, setPlatformSearching] = useState(false)
+  const [platformSearched, setPlatformSearched] = useState(false)
+  const [platformError, setPlatformError] = useState('')
 
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -106,6 +125,39 @@ export default function AdminDashboard({
     ])
     setManualTitle('')
     setManualUrl('')
+  }
+
+  const searchPlatform = async () => {
+    if (!platformQuery.trim()) return
+    setPlatformSearching(true)
+    setPlatformSearched(false)
+    setPlatformResults([])
+    setPlatformError('')
+    try {
+      const api = SEARCH_API[manualPlatform]
+      const res = await fetch(`${api}?q=${encodeURIComponent(platformQuery)}`)
+      const data = await res.json()
+      if (data.error) setPlatformError(data.error)
+      setPlatformResults(data.results ?? [])
+    } finally {
+      setPlatformSearching(false)
+      setPlatformSearched(true)
+    }
+  }
+
+  const addFromPlatformSearch = (result: SearchResult) => {
+    setManualPrograms((prev) => [
+      ...prev,
+      { platform: manualPlatform, title: result.title, url: result.url, frequency: '不定期' },
+    ])
+  }
+
+  const handlePlatformChange = (p: Platform) => {
+    setManualPlatform(p)
+    setPlatformQuery('')
+    setPlatformResults([])
+    setPlatformSearched(false)
+    setPlatformError('')
   }
 
   const removeManualProgram = (i: number) => {
@@ -282,19 +334,71 @@ export default function AdminDashboard({
               )}
             </div>
 
-            {/* 手動入力 */}
+            {/* 他媒体の番組追加 */}
             <div className="space-y-3">
-              <p className="text-xs text-gray-500 font-medium">他の媒体の番組をURLで追加</p>
+              <p className="text-xs text-gray-500 font-medium">他の媒体の番組を追加</p>
+              <select
+                value={manualPlatform}
+                onChange={(e) => handlePlatformChange(e.target.value as Platform)}
+                className="w-full px-3 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-colors"
+              >
+                {PLATFORMS.map((p) => (
+                  <option key={p} value={p}>{platformDisplayName[p]}</option>
+                ))}
+              </select>
+
+              {/* 検索対応媒体（YouTube / Spotify） */}
+              {SEARCHABLE_PLATFORMS.includes(manualPlatform) && (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="番組・チャンネル名で検索"
+                      value={platformQuery}
+                      onChange={(e) => setPlatformQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && searchPlatform()}
+                      className="flex-1 px-3 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-colors"
+                    />
+                    <button
+                      onClick={searchPlatform}
+                      disabled={!platformQuery.trim() || platformSearching}
+                      className="px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl disabled:opacity-40 hover:bg-gray-800 transition-colors"
+                    >
+                      {platformSearching ? '...' : '検索'}
+                    </button>
+                  </div>
+                  {platformError && (
+                    <p className="text-xs text-red-500">{platformError}（Vercelの環境変数を確認してください）</p>
+                  )}
+                  {platformSearched && !platformError && (
+                    platformResults.length === 0 ? (
+                      <p className="text-sm text-gray-400 text-center py-2">見つかりませんでした</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {platformResults.map((r, i) => (
+                          <li key={i} className="flex items-start gap-3 p-3 rounded-xl border border-gray-200">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{r.title}</p>
+                              {r.creator && <p className="text-xs text-gray-400 mt-0.5 truncate">{r.creator}</p>}
+                            </div>
+                            <button
+                              onClick={() => addFromPlatformSearch(r)}
+                              disabled={manualPrograms.some((p) => p.url === r.url)}
+                              className="shrink-0 px-3 py-1 bg-gray-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-gray-800 transition-colors"
+                            >
+                              {manualPrograms.some((p) => p.url === r.url) ? '追加済' : '追加'}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  )}
+                </div>
+              )}
+
+              {/* 直接入力（全媒体共通） */}
               <div className="space-y-2">
-                <select
-                  value={manualPlatform}
-                  onChange={(e) => setManualPlatform(e.target.value as Platform)}
-                  className="w-full px-3 py-2.5 bg-gray-100 rounded-xl text-sm outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-colors"
-                >
-                  {PLATFORMS.map((p) => (
-                    <option key={p} value={p}>{platformDisplayName[p]}</option>
-                  ))}
-                </select>
+                <p className="text-xs text-gray-400">URLを直接入力</p>
                 <input
                   type="text"
                   placeholder="番組名"
