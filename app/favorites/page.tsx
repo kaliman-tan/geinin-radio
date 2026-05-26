@@ -1,6 +1,7 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import { redirect } from 'next/navigation'
+import { auth } from '@/auth'
+import { pool } from '@/lib/db'
+import { redis } from '@/lib/redis'
 import artistsData from '@/data/artists.json'
 import type { Artist } from '@/types'
 import ArtistCard from '@/components/ArtistCard'
@@ -8,22 +9,20 @@ import BottomNav from '@/components/BottomNav'
 
 const staticArtists = artistsData as Artist[]
 
-export default function FavoritesPage() {
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([])
-  const [customArtists, setCustomArtists] = useState<Artist[]>([])
-  const [mounted, setMounted] = useState(false)
+export default async function FavoritesPage() {
+  const session = await auth()
+  if (!session?.user) {
+    redirect('/login?callbackUrl=/favorites')
+  }
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('geiradio-favorites') || '[]') as string[]
-    setFavoriteIds(saved)
-    fetch('/api/artists')
-      .then((res) => res.json())
-      .then((data: Artist[]) => setCustomArtists(data))
-      .catch(() => {})
-      .finally(() => setMounted(true))
-  }, [])
+  const result = await pool.query(
+    'SELECT artist_id FROM favorites WHERE user_id = $1 ORDER BY id DESC',
+    [session.user.id]
+  )
+  const favoriteIds = (result.rows as { artist_id: string }[]).map((r) => r.artist_id)
 
-  const allArtists = [...customArtists, ...staticArtists]
+  const kvArtists = (await redis.get<Artist[]>('artists')) ?? []
+  const allArtists = [...kvArtists, ...staticArtists]
   const favorites = allArtists.filter((a) => favoriteIds.includes(a.id))
 
   return (
@@ -33,7 +32,7 @@ export default function FavoritesPage() {
       </header>
 
       <main className="pb-24">
-        {!mounted ? null : favorites.length === 0 ? (
+        {favorites.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-8">
             <svg
               className="w-14 h-14 text-gray-200 mb-4"

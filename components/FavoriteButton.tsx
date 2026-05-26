@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   artistId: string
@@ -8,18 +9,40 @@ interface Props {
 
 export default function FavoriteButton({ artistId }: Props) {
   const [isFavorite, setIsFavorite] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('geiradio-favorites') || '[]') as string[]
-    setIsFavorite(saved.includes(artistId))
+    fetch('/api/favorites')
+      .then(async (res) => {
+        if (!res.ok) return { favorites: [] as string[] }
+        return res.json() as Promise<{ favorites: string[] }>
+      })
+      .then((data) => {
+        setIsFavorite(data.favorites.includes(artistId))
+        setLoaded(true)
+      })
+      .catch(() => setLoaded(true))
   }, [artistId])
 
-  const toggle = () => {
-    const saved = JSON.parse(localStorage.getItem('geiradio-favorites') || '[]') as string[]
-    const isCurrently = saved.includes(artistId)
-    const next = isCurrently ? saved.filter((id) => id !== artistId) : [...saved, artistId]
-    localStorage.setItem('geiradio-favorites', JSON.stringify(next))
-    setIsFavorite(!isCurrently)
+  const toggle = async () => {
+    if (!loaded) return
+
+    const method = isFavorite ? 'DELETE' : 'POST'
+    const res = await fetch('/api/favorites', {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ artistId }),
+    })
+
+    if (res.status === 401) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`)
+      return
+    }
+
+    if (res.ok) {
+      setIsFavorite(!isFavorite)
+    }
   }
 
   return (
@@ -30,7 +53,11 @@ export default function FavoriteButton({ artistId }: Props) {
     >
       <svg
         className={`w-5 h-5 transition-colors ${
-          isFavorite ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-gray-400'
+          loaded
+            ? isFavorite
+              ? 'fill-red-500 stroke-red-500'
+              : 'fill-none stroke-gray-400'
+            : 'fill-none stroke-gray-200'
         }`}
         viewBox="0 0 24 24"
         strokeWidth={2}
