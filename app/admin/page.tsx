@@ -6,7 +6,8 @@ import AdminDashboard from './AdminDashboard'
 
 export default async function AdminPage() {
   const cookieStore = await cookies()
-  const isAuthed = cookieStore.get('admin_token')?.value === process.env.ADMIN_PASSWORD
+  const isAuthed = !!process.env.ADMIN_PASSWORD &&
+    cookieStore.get('admin_token')?.value === process.env.ADMIN_PASSWORD
 
   if (!isAuthed) {
     return <LoginForm />
